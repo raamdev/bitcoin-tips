@@ -78,6 +78,7 @@ class BitcointipsSettings {
     $this->add_field('pluginad', 'Display link to plugin home page');
     $this->add_field('notify', 'Email notifications');
     $this->add_field('email', 'Email address');
+    $this->add_field('append', 'Show tip box');
   }
   
   /**
@@ -188,6 +189,18 @@ class BitcointipsSettings {
     ;
   }
   
+  /**
+   * Displays show tip box checkbox
+   */
+
+  public function show_field_append() {
+    echo
+      '<p class="description bitcointips-width">',
+        '<input name="bitcointips_append" type="checkbox" style="margin-right: 10px;" ' . checked( 'on', get_option('bitcointips_append', 'on'), false )  . ' />',
+        'If enabled, the tip box will be automatically added to the bottom of posts.',
+      '</p>'
+    ;
+  }
   
 }
 

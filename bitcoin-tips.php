@@ -41,7 +41,9 @@ class Bitcointips {
    */
   
   public function __construct() {
-    add_filter('the_content', array($this, 'filter_content'));
+		if ( get_option('bitcointips_append') ) {
+			add_filter('the_content', array($this, 'filter_content'));
+		}
     add_action('wp_enqueue_scripts', array($this, 'register_css'));
     add_action('parse_request', array($this, 'parse_request'));
   }
@@ -77,21 +79,38 @@ class Bitcointips {
   }
 
   /**
+   * Checks for for required state
+   */
+
+  public function check_state() {
+
+	  if (!$this->configured()) {
+      return FALSE;
+    }
+
+  	global $post;
+	  if (!$post->ID) { return FALSE; }
+
+	  $address = $this->get_post_address($post->ID);
+	  if (!strlen($address)) {
+	    return FALSE;
+	  }
+
+		return TRUE;
+	
+	}
+
+  /**
    * Adds tip box at the end of post content
    */
-  
-  public function filter_content($content) {
-    if (!$this->configured()) {
-      return $content;
-    }
-    
-    global $post;
-    if (!$post->ID) { return $content; }
 
-    $address = $this->get_post_address($post->ID);    
-    if (!strlen($address)) {
+  public function filter_content($content) {
+    if (!$this->check_state()) {
       return $content;
     }
+
+  	global $post;
+	  $address = $this->get_post_address($post->ID);
     
     $qrcode = 'https://chart.googleapis.com/chart?chs=120x120&cht=qr&chld=H|0&chl=' . $address;
 
@@ -133,10 +152,93 @@ class Bitcointips {
     }
     
     $output .= '</div>';
-  
+
     return $content . $output;
   }
-  
+
+ /**
+   * Shows the Bitcoin Tip widget
+   */
+
+  public function show_widget() {
+    if (!$this->check_state()) {
+      return;
+    }
+
+  	global $post;
+	  $address = $this->get_post_address($post->ID);
+
+    $qrcode = 'https://chart.googleapis.com/chart?chs=120x120&cht=qr&chld=H|0&chl=' . $address;
+
+    $output =
+      '<div class="bitcointips-widget">' .
+      '<div class="qrcode">' .
+        '<a href="bitcoin:' . $address . '"><img src="' . $qrcode . '" width="120" height="120" /></a>'
+    ;
+
+    if (get_option('bitcointips_stats')) {
+      $stats_count = (integer) get_post_meta($post->ID, 'bitcointips_count', true);
+      $stats_avg = (integer) get_post_meta($post->ID, 'bitcointips_avg', true);
+      $stats_sum = (integer) get_post_meta($post->ID, 'bitcointips_sum', true);
+      if ($stats_count == 0) {
+        $output .= 'No tips yet.<br />Be the first to tip!';
+      } elseif ($stats_count == 1) {
+        $output .= '1 tip so far<br />';
+        $output .= $this->display_BTC($stats_sum);
+      } else {
+        $output .= $stats_count . ' tips so far<br />';
+        $output .= $this->display_BTC($stats_sum) . '<br />';
+        $output .= '(avg tip ' . $this->display_BTC($stats_avg, 5) .')';
+      }
+    }
+
+    $output .= '</div>' .
+      '<div class="contents">' .
+        '<h2>' . get_option('bitcointips_label') . '</h2>' .
+        '<p><a href="bitcoin:' . $address . '">' . $address . '</a></p>'
+    ;
+
+    if (strlen($text = get_option('bitcointips_text'))) {
+      $output .= '<p>' . $text . '</p>';
+    }
+    $output .= '</div>';
+    
+    if (get_option('bitcointips_pluginad')) {
+      $output .= '<div class="pluginhome"><a href="' . BITCOINTIPS_HOME_URL . '">Powered by Bitcoin Tips</a></div>';
+    }
+
+    $output .= '</div>';
+
+    return $output;
+  }
+
+  /**
+   * Returns stats for given post
+	 */
+
+	public function get_stats($post_id) {
+		
+	  $stats_count = (integer) get_post_meta($post_id, 'bitcointips_count', true);
+	  $stats_avg = (integer) get_post_meta($post_id, 'bitcointips_avg', true);
+	  $stats_sum = (integer) get_post_meta($post_id, 'bitcointips_sum', true);
+
+		$output = '<div class="bitcointips-stats">';
+
+	  if ($stats_count == 0) {
+	    $output .= 'No tips yet.<br />Be the first to tip!';
+	  } elseif ($stats_count == 1) {
+	    $output .= '1 tip so far<br />';
+	    $output .= $this->display_BTC($stats_sum);
+	  } else {
+	    $output .= $stats_count . ' tips so far<br />';
+	    $output .= $this->display_BTC($stats_sum) . '<br />';
+	    $output .= '(avg tip ' . $this->display_BTC($stats_avg, 5) .')';
+	  }
+		$output .= '</div>';
+
+		return $output;
+	}
+
   /**
    * Returns post's unique tip jar address.
    * 
@@ -154,6 +256,14 @@ class Bitcointips {
     } else {
       return array_pop($addresses);
     }
+  }
+
+  /**
+   * Returns post's unique tip jar address.
+   */
+  
+  public function the_post_address($post_id) {
+		return $this->get_post_address($post_id);
   }
   
   /**
@@ -271,6 +381,61 @@ class Bitcointips {
 }
 
 new Bitcointips();
+
+/**
+ * Plugin's [bitcointips] shortcode, with optional output="" attribute
+ *
+ * [bitcointips] will return the full widget using settings defined in plugin config
+ * [bitcointips output="qrcode"] will return only the unique post QR code
+ * [bitcointips output="address"] will return only the unique post bitcoin address
+ */
+
+function bitcointips_shortcode( $attributes ) {
+	
+	// Catch output="" shortcode attribute to allow for outputting specific data
+	extract( shortcode_atts( array( 'output' => NULL ), $attributes ) );
+	
+	$bitcointips = new Bitcointips();
+	
+	if (!$bitcointips->check_state()) {
+    return "An error occurred: Either Bitcoin Tips has not been configured or this shortcode is being used somewhere other than a post or page. Please see Settings -> Bitcoin Tips.";
+  }
+	
+	global $post;
+
+	switch( $output ) {
+
+		case 'qrcode':
+		
+		  $address = $bitcointips->the_post_address($post->ID);
+			$qrcode = 'https://chart.googleapis.com/chart?chs=120x120&cht=qr&chld=H|0&chl=' . $address;
+			$qrcode_html = '<div class="qrcode">' .
+		    '<a href="bitcoin:' . $address . '"><img src="' . $qrcode . '" width="120" height="120" /></a>' . 
+				'</div>';
+			$return_data = $qrcode_html;
+			break;
+
+		case 'address':
+		
+		  $address = $bitcointips->the_post_address($post->ID);
+			$address_html = '<a href="bitcoin:' . $address . '">' . $address . '</a>';
+			$return_data = $address_html;
+			break;
+
+		case 'stats':
+		
+			$return_data = $bitcointips->get_stats($post->ID);
+			break;
+
+		default: // By default, show full widget using settings defined in plugin config
+		
+			$return_data = $bitcointips->show_widget();
+			break;
+	}
+	
+	return $return_data;
+}
+add_shortcode('bitcointips', 'bitcointips_shortcode');
 
 /**
  * Plugin's database table name
