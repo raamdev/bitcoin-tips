@@ -1,0 +1,62 @@
+.bitcointips-widget {
+  background-color: #fff;
+  color: #191919;
+  position: relative;
+  border: 1px solid silver;
+  margin: 16px 0;
+  padding: 16px;
+}
+
+.bitcointips-widget * {
+  clear: none;
+}
+
+.bitcointips-widget:after {
+	content: ".";
+	display: block;
+	clear: both;
+	visibility: hidden;
+	line-height: 0;
+	height: 0;
+}
+
+.bitcointips-widget .qrcode {
+  clear: none;
+  float: left;
+  width: 120px;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+}
+
+.bitcointips-widget .contents {
+  clear: none;
+  margin-left: 136px;
+}
+
+.bitcointips-widget .contents h2 {
+  margin: -2px 0 8px;
+  font-size: 24px;
+  line-height: 28px;
+}
+
+.bitcointips-widget .contents p {
+  margin: 8px 0;
+}
+
+.bitcointips-widget .pluginhome {
+  position: absolute;
+  bottom: 0;
+  right: 4px;
+  font-size: 10px;
+  text-align: center;
+}
+
+.bitcointips-widget .pluginhome a, .bitcointips-widget .pluginhome a:visited {
+  color: silver;
+}
+
+
+.bitcointips-widget .pluginhome a:hover {
+  color: inherit;
+}
