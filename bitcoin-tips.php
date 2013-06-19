@@ -275,7 +275,7 @@ class Bitcointips {
     $address = get_option('bitcointips_address');
     $callback = urlencode(site_url() . '/?bitcointipped=true&secret=' . $this->get_secret());
     $api_call = 'https://blockchain.info/api/receive?method=create&address=' . $address . '&shared=false&callback=' . $callback;
-    $result = @file_get_contents($api_call);
+    $result = $this->file_get_contents_curl($api_call);
     if (!strlen($result)) { return false; }
     $data = @json_decode($result);
     if (!$data) { return false; }
@@ -378,6 +378,24 @@ class Bitcointips {
     }
     return $value . ' BTC';
   }
+
+	/**
+	 * Function to replace file_get_contents with better supported cURL
+	 */
+
+	function file_get_contents_curl($url) {
+		$ch = curl_init();
+
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); //Set curl to return the data instead of printing it to the browser.
+		curl_setopt($ch, CURLOPT_URL, $url);
+
+		$data = curl_exec($ch);
+		curl_close($ch);
+
+		return $data;
+	}
+
 }
 
 new Bitcointips();
