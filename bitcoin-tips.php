@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Bitcoin Tips
+Plugin Name: - [Modified by Raam Dev] Bitcoin Tips
 Plugin URI: http://terk.co/wordpress-bitcoin-tips-plugin
 Description: Collects bitcoin tips for your content. Creates unique addresses per post (for stats purpose) and immediately forwards all user payments to your specified receiving address.
 Version: 0.1.1
