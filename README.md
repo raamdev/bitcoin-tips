@@ -3,9 +3,14 @@ bitcoin-tips
 
 Another fork of the WordPress Bitcoin Tips plugin. See http://terk.co/wordpress-bitcoin-tips-plugin/
 
-It runs without consulting the google charts API.
-
 ## Features added by this fork
+
+### Improved Privacy
+
+The plugin does not need the google charts API any more. It uses a PHP library, which is included in the `lib` folder.
+It needs the gd PHP library.
+
+This enhances the privacy of website visitors.
 
 ### [bitcointips] Shortcode
 

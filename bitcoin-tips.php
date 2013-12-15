@@ -3,7 +3,7 @@
 Plugin Name: Bitcoin Tips (modified by Flowolf & Raam Dev)
 Plugin URI: http://github.com/flowolf/bitcoin-tips
 Description: Collects bitcoin tips for your content. Creates unique addresses per post (for stats purpose) and immediately forwards all user payments to your specified receiving address.
-Version: 0.2.5
+Version: 0.2.1
 Author: Terk, Raam Dev, Flowolf
 Author URI: http://github.com/flowolf/bitcoin-tips
 
@@ -33,7 +33,7 @@ License: MIT
  */
 
 define('BITCOINTIPS_HOME_URL', 'http://github.com/flowolf/bitcoin-tips');
-define('BITCOINTIPS_VERSION', '0.2.5');
+define('BITCOINTIPS_VERSION', '0.2.1');
 #define('BITCOINTIPS_QRCODE_URL', 'https://chart.googleapis.com/chart?chs=120x120&cht=qr&chld=H|0&chl='); // + address
 define('BITCOINTIPS_QRCODE_URL', plugins_url('/lib/qr.php?e=H&s=4&d=', __FILE__)); // + address
 
