@@ -1,9 +1,16 @@
 bitcoin-tips
 ============
 
-A fork of the WordPress Bitcoin Tips plugin. See http://terk.co/wordpress-bitcoin-tips-plugin/
+Another fork of the WordPress Bitcoin Tips plugin. See http://terk.co/wordpress-bitcoin-tips-plugin/
 
 ## Features added by this fork
+
+### Improved Privacy
+
+The plugin does not need the google charts API any more. It uses a PHP library, which is included in the `lib` folder.
+It needs the gd PHP library.
+
+This enhances the privacy of website visitors.
 
 ### [bitcointips] Shortcode
 
@@ -23,9 +30,15 @@ With this new option, you can disable this behavior. This allows you to design y
 
 If you like this plugin, please donate to the original plugin author: `1EDKfULtvuSpHGLSg7eZM38G24v4NNR3va`
 
-If you like my contributions, you can donate to me here: `1DoiUUnCYhK8uuQzK6YvSfrkVSotEKzm46`
+If you like raamdev's contributions, you can donate to: `1DoiUUnCYhK8uuQzK6YvSfrkVSotEKzm46`
+
+If you like my contributions, you can donate to me here: `1Fya8UEzYMVGkv1S2j9bGUcqAHCTmHaxn7`
 
 ## Changelog
+
+### 2013-12-15
+
+- Added a qr-code library, to run independently from google's API. This enhances the privacy of website visitors.
 
 ### 2013-06-19
 

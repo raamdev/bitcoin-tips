@@ -1,11 +1,12 @@
 <?php
 /*
-Plugin Name: - [Modified by Raam Dev] Bitcoin Tips
-Plugin URI: http://terk.co/wordpress-bitcoin-tips-plugin
+Plugin Name: Bitcoin Tips (modified by Flowolf & Raam Dev)
+Plugin URI: http://github.com/flowolf/bitcoin-tips
 Description: Collects bitcoin tips for your content. Creates unique addresses per post (for stats purpose) and immediately forwards all user payments to your specified receiving address.
-Version: 0.1.1
-Author: Terk
-Author URI: http://terk.co
+Version: 0.2.1
+Author: Terk, Raam Dev, Flowolf
+Author URI: http://github.com/flowolf/bitcoin-tips
+
 License: MIT
 */
 
@@ -31,8 +32,10 @@ License: MIT
  * THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-define('BITCOINTIPS_HOME_URL', 'http://terk.co/wordpress-bitcoin-tips-plugin');
-define('BITCOINTIPS_VERSION', '0.2');
+define('BITCOINTIPS_HOME_URL', 'http://github.com/flowolf/bitcoin-tips');
+define('BITCOINTIPS_VERSION', '0.2.1');
+#define('BITCOINTIPS_QRCODE_URL', 'https://chart.googleapis.com/chart?chs=120x120&cht=qr&chld=H|0&chl='); // + address
+define('BITCOINTIPS_QRCODE_URL', plugins_url('/lib/qr.php?e=H&s=4&d=', __FILE__)); // + address
 
 class Bitcointips {
   
@@ -49,7 +52,7 @@ class Bitcointips {
   }
 
   /**
-   * Checks wether destination bitcoin address is configured
+   * Checks whether destination bitcoin address is configured
    */
   
   public function configured() {
@@ -112,7 +115,7 @@ class Bitcointips {
   	global $post;
 	  $address = $this->get_post_address($post->ID);
     
-    $qrcode = 'https://chart.googleapis.com/chart?chs=120x120&cht=qr&chld=H|0&chl=' . $address;
+    $qrcode = BITCOINTIPS_QRCODE_URL . $address;
 
     $output =
       '<div class="bitcointips-widget">' .
@@ -168,7 +171,8 @@ class Bitcointips {
   	global $post;
 	  $address = $this->get_post_address($post->ID);
 
-    $qrcode = 'https://chart.googleapis.com/chart?chs=120x120&cht=qr&chld=H|0&chl=' . $address;
+    $qrcode = BITCOINTIPS_QRCODE_URL . $address;
+
 
     $output =
       '<div class="bitcointips-widget">' .
@@ -426,7 +430,7 @@ function bitcointips_shortcode( $attributes ) {
 		case 'qrcode':
 		
 		  $address = $bitcointips->the_post_address($post->ID);
-			$qrcode = 'https://chart.googleapis.com/chart?chs=120x120&cht=qr&chld=H|0&chl=' . $address;
+                        $qrcode = BITCOINTIPS_QRCODE_URL . $address;
 			$qrcode_html = '<div class="qrcode">' .
 		    '<a href="bitcoin:' . $address . '"><img src="' . $qrcode . '" width="120" height="120" /></a>' . 
 				'</div>';
