@@ -53,6 +53,19 @@ class BitcointipsSettings {
   	do_settings_sections('bitcointips');
   	submit_button();
   	echo '</form>';
+?>	
+      <p>
+       <h3>Usage</h3>
+	The `[bitcointips]` shortcode can be used on any post or page to display the tip box. The shortcode supports one shortcode attribute called `output`:<br/>
+	<br/>
+	 - `[bitcointips output="address"]` will show unique Bitcoin tip address for the current post<br/>
+	 - `[bitcointips output="qrcode"]` will show unique Bitcoin QR code for the current post<br/>
+	 - `[bitcointips output="stats"]` will show tip stats for the current post<br/>
+
+      </p>
+<?php
+
+
   	echo '</div>';
   }
 
